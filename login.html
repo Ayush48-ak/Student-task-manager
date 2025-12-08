@@ -18,15 +18,15 @@
         <div class="hero-content">
             <h1>Login</h1>
 
-            <form>
+            <form id="loginForm">
                 <p>Email</p>
-                <input type="email" required>
+                <input type="email" id="loginEmail" required>
 
                 <p>Password</p>
-                <input type="password" required>
+                <input type="password" id="loginPassword" required>
 
                 <br><br>
-                <button class="btn-primary">Login</button>
+                <button class="btn-primary" type="submit">Login</button>
                 <p>New user? <a href="signup.html">Create account</a></p>
             </form>
         </div>
@@ -37,6 +37,29 @@
     </section>
 
 </div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let email = document.getElementById("loginEmail").value;
+    let password = document.getElementById("loginPassword").value;
+
+    let storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (!storedUser) {
+        alert("No user found. Please sign up first.");
+        return;
+    }
+
+    if (email === storedUser.email && password === storedUser.password) {
+        localStorage.setItem("isLoggedIn", "true");
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Invalid email or password!");
+    }
+});
+</script>
 
 </body>
 </html>
