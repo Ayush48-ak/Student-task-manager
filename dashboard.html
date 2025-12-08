@@ -19,13 +19,13 @@
         </ul>
 
         <div class="nav-btns">
-            <a href="index.html" class="btn-outline">Logout</a>
+            <a href="#" class="btn-outline" onclick="logout()">Logout</a>
         </div>
     </nav>
 
     <section class="hero">
         <div class="hero-content">
-            <h1>Welcome, Student 👋</h1>
+            <h1 id="welcomeText">Welcome, Student 👋</h1>
             <p>Here you can manage all your academic tasks.</p>
 
             <h3>Your Tasks:</h3>
@@ -45,6 +45,25 @@
     </section>
 
 </div>
+
+<script>
+// Dashboard Protection
+if (localStorage.getItem("isLoggedIn") !== "true") {
+    window.location.href = "login.html";
+}
+
+// Show user name
+let user = JSON.parse(localStorage.getItem("user"));
+if (user) {
+    document.getElementById("welcomeText").innerText = "Welcome, " + user.name + " 👋";
+}
+
+// Logout Function
+function logout() {
+    localStorage.removeItem("isLoggedIn");
+    window.location.href = "login.html";
+}
+</script>
 
 </body>
 </html>
