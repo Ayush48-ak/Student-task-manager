@@ -18,18 +18,18 @@
         <div class="hero-content">
             <h1>Create Account</h1>
 
-            <form>
+            <form id="signupForm">
                 <p>Full Name</p>
-                <input type="text" required>
+                <input type="text" id="name" required>
 
                 <p>Email</p>
-                <input type="email" required>
+                <input type="email" id="email" required>
 
                 <p>Password</p>
-                <input type="password" required>
+                <input type="password" id="password" required>
 
                 <br><br>
-                <button class="btn-primary">Sign Up</button>
+                <button class="btn-primary" type="submit">Sign Up</button>
                 <p>Already have an account? <a href="login.html">Login</a></p>
             </form>
         </div>
@@ -40,6 +40,26 @@
     </section>
 
 </div>
+
+<script>
+document.getElementById("signupForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let name = document.getElementById("name").value;
+    let email = document.getElementById("email").value;
+    let password = document.getElementById("password").value;
+
+    let user = {
+        name: name,
+        email: email,
+        password: password
+    };
+
+    localStorage.setItem("user", JSON.stringify(user));
+    alert("Signup successful! Please login.");
+    window.location.href = "login.html";
+});
+</script>
 
 </body>
 </html>
