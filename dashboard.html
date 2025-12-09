@@ -28,15 +28,14 @@
             <h1 id="welcomeText">Welcome, Student 👋</h1>
             <p>Here you can manage all your academic tasks.</p>
 
-            <h3>Your Tasks:</h3>
-            <ul>
-                <li>✔ Complete Assignment 1</li>
-                <li>✔ Study for Internal Exam</li>
-                <li>✔ Submit Project Report</li>
-            </ul>
+<h3>Add New Task:</h3>
+<input type="text" id="taskInput" placeholder="Enter your task">
+<br><br>
+<button class="btn-primary" onclick="addTask()">Add Task</button>
 
-            <br>
-            <a href="#" class="btn-primary">Add New Task</a>
+<h3>Your Tasks:</h3>
+<ul id="taskList"></ul>
+
         </div>
 
         <div class="hero-images">
@@ -47,23 +46,60 @@
 </div>
 
 <script>
-// Dashboard Protection
+// ===== Dashboard Protection =====
 if (localStorage.getItem("isLoggedIn") !== "true") {
     window.location.href = "login.html";
 }
 
-// Show user name
+// ===== Show User Name =====
 let user = JSON.parse(localStorage.getItem("user"));
 if (user) {
     document.getElementById("welcomeText").innerText = "Welcome, " + user.name + " 👋";
 }
 
-// Logout Function
+// ===== Logout Function =====
 function logout() {
     localStorage.removeItem("isLoggedIn");
     window.location.href = "login.html";
 }
-</script>
 
-</body>
-</html>
+// ===== Load Tasks On Page Load =====
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+displayTasks();
+
+// ===== Add New Task =====
+function addTask() {
+    let taskInput = document.getElementById("taskInput").value;
+
+    if (taskInput === "") {
+        alert("Please enter a task!");
+        return;
+    }
+
+    tasks.push(taskInput);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+
+    document.getElementById("taskInput").value = "";
+    displayTasks();
+}
+
+// ===== Display Tasks =====
+function displayTasks() {
+    let taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+        let li = document.createElement("li");
+        li.innerHTML = task + 
+        ` <button onclick="deleteTask(${index})">❌</button>`;
+        taskList.appendChild(li);
+    });
+}
+
+// ===== Delete Task =====
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    displayTasks();
+}
+</script>
