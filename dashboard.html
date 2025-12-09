@@ -25,16 +25,22 @@
 
     <section class="hero">
         <div class="hero-content">
+
             <h1 id="welcomeText">Welcome, Student 👋</h1>
             <p>Here you can manage all your academic tasks.</p>
 
-<h3>Add New Task:</h3>
-<input type="text" id="taskInput" placeholder="Enter your task">
-<br><br>
-<button class="btn-primary" onclick="addTask()">Add Task</button>
+            <h3>Add New Task:</h3>
 
-<h3>Your Tasks:</h3>
-<ul id="taskList"></ul>
+            <input type="text" id="taskInput" placeholder="Enter your task">
+            <br><br>
+
+            <input type="date" id="taskDate">
+            <br><br>
+
+            <button class="btn-primary" onclick="addTask()">Add Task</button>
+
+            <h3>Your Tasks:</h3>
+            <ul id="taskList"></ul>
 
         </div>
 
@@ -46,60 +52,101 @@
 </div>
 
 <script>
-// ===== Dashboard Protection =====
+// ================= DASHBOARD PROTECTION =================
 if (localStorage.getItem("isLoggedIn") !== "true") {
     window.location.href = "login.html";
 }
 
-// ===== Show User Name =====
+// ================= SHOW USER NAME =================
 let user = JSON.parse(localStorage.getItem("user"));
 if (user) {
-    document.getElementById("welcomeText").innerText = "Welcome, " + user.name + " 👋";
+    document.getElementById("welcomeText").innerText =
+        "Welcome, " + user.name + " 👋";
 }
 
-// ===== Logout Function =====
+// ================= LOGOUT FUNCTION =================
 function logout() {
     localStorage.removeItem("isLoggedIn");
     window.location.href = "login.html";
 }
 
-// ===== Load Tasks On Page Load =====
+// ================= LOAD TASKS =================
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 displayTasks();
+checkDeadlines();
 
-// ===== Add New Task =====
+// ================= ADD TASK WITH DEADLINE =================
 function addTask() {
     let taskInput = document.getElementById("taskInput").value;
+    let taskDate = document.getElementById("taskDate").value;
 
-    if (taskInput === "") {
-        alert("Please enter a task!");
+    if (taskInput === "" || taskDate === "") {
+        alert("Please enter both task and deadline!");
         return;
     }
 
-    tasks.push(taskInput);
+    let taskObj = {
+        name: taskInput,
+        date: taskDate
+    };
+
+    tasks.push(taskObj);
     localStorage.setItem("tasks", JSON.stringify(tasks));
 
     document.getElementById("taskInput").value = "";
+    document.getElementById("taskDate").value = "";
+
     displayTasks();
 }
 
-// ===== Display Tasks =====
+// ================= DISPLAY TASKS WITH STATUS =================
 function displayTasks() {
     let taskList = document.getElementById("taskList");
     taskList.innerHTML = "";
 
+    let today = new Date().toISOString().split("T")[0];
+
     tasks.forEach((task, index) => {
+
+        let status = "";
+
+        if (task.date < today) {
+            status = " ❌ Overdue";
+        }
+        else if (task.date === today) {
+            status = " ⚠ Due Today";
+        }
+        else {
+            status = " ✅ Upcoming";
+        }
+
         let li = document.createElement("li");
-        li.innerHTML = task + 
-        ` <button onclick="deleteTask(${index})">❌</button>`;
+        li.innerHTML =
+            task.name + " ( " + task.date + " ) " + status +
+            ` <button onclick="deleteTask(${index})">❌</button>`;
+
         taskList.appendChild(li);
     });
 }
 
-// ===== Delete Task =====
+// ================= DELETE TASK =================
 function deleteTask(index) {
     tasks.splice(index, 1);
     localStorage.setItem("tasks", JSON.stringify(tasks));
     displayTasks();
 }
+
+// ================= REMINDER SYSTEM =================
+function checkDeadlines() {
+    let today = new Date().toISOString().split("T")[0];
+
+    let dueTodayTasks = tasks.filter(task => task.date === today);
+
+    if (dueTodayTasks.length > 0) {
+        alert("⏰ Reminder! You have tasks due today!");
+    }
+}
 </script>
+
+</body>
+</html>
